@@ -139,11 +139,11 @@ long read_source_file(char* path, char** buffer)
 {
 	FILE * file;
 	long size;
-	if (file = fopen(path, "r")) {
+	if (file = fopen(path, "rb")) {
 		if (!fseek(file, 0, SEEK_END)) {
 			if ((size = ftell(file)) != -1L) {
 				rewind(file);
-				if (*buffer = calloc(size, sizeof(char) + 1)) {
+				if (*buffer = calloc(size + 1, sizeof(char))) {
 					if (fread(*buffer, sizeof(char), size + 1, file)) {
 						fclose(file);
 						return size;
