@@ -139,11 +139,11 @@ long read_source_file(char* path, char** buffer)
 {
 	FILE * file;
 	long size;
-	if (file = fopen(path, "rb")) {
+	if ((file = fopen(path, "rb")) != NULL) {
 		if (!fseek(file, 0, SEEK_END)) {
 			if ((size = ftell(file)) != -1L) {
 				rewind(file);
-				if (*buffer = calloc(size + 1, sizeof(char))) {
+				if ((*buffer = calloc(size + 1, sizeof(char))) != NULL) {
 					if (fread(*buffer, sizeof(char), size + 1, file)) {
 						fclose(file);
 						return size;
@@ -173,7 +173,7 @@ void remove_comments(char* buffer)
 
 bool create_stack(void)
 {
-	if (stack.contents = (long long*)calloc(STACK_MEMBERS, sizeof(long long))) {
+	if ((stack.contents = (long long*)calloc(STACK_MEMBERS, sizeof(long long))) != NULL) {
 		stack.size = STACK_MEMBERS;
 		stack.current = STACK_MEMBERS;
 		return true;
@@ -216,8 +216,8 @@ void cleanup_stack(void)
 
 bool create_heap(void)
 {
-	if (heap.address = (long long*)calloc(HEAP_MEMBERS, sizeof(long long))) {
-		if (heap.value = (long long*)calloc(HEAP_MEMBERS, sizeof(long long))) {
+	if ((heap.address = (long long*)calloc(HEAP_MEMBERS, sizeof(long long))) != NULL) {
+		if ((heap.value = (long long*)calloc(HEAP_MEMBERS, sizeof(long long))) != NULL) {
 			heap.elements = 0;
 			return true;
 		}
@@ -266,8 +266,8 @@ void cleanup_heap(void)
 
 bool create_label_table(void)
 {
-	if (label_table.label_id = (char**)calloc(MAX_LABELS, sizeof(char*))) {
-		if (label_table.label_location = (int*)calloc(MAX_LABELS, sizeof(int))) {
+	if ((label_table.label_id = (char**)calloc(MAX_LABELS, sizeof(char*))) != NULL) {
+		if ((label_table.label_location = (int*)calloc(MAX_LABELS, sizeof(int))) != NULL) {
 			return true;
 		}
 		free (label_table.label_id);
@@ -417,7 +417,7 @@ bool locate_jump_labels(char* source)
 	char* label_marker = "\x0A\x20\x20", * temp;
 	for (int i = 0; source[i]; i++) {
 		if (!strncmp(&(source[i]), label_marker, 3) && (source[i-1] != '\x09')) {
-			if (label_table.label_id[label_index] = (char*)calloc(MAX_LABEL_LENGTH, sizeof(char))) {
+			if ((label_table.label_id[label_index] = (char*)calloc(MAX_LABEL_LENGTH, sizeof(char))) != NULL) {
 				// Would look better if it used retrieve_label_or_number,
 				// but I'm having a hell of a time getting it to work
 				i += 3; // This gets us to the actual label
@@ -494,9 +494,9 @@ long long convert_ws_to_number(char* ws)
 int retrieve_label_or_number(char* data, char** ret)
 {
 	char* loc;
-	if (*ret = (char*)calloc(MAX_LABEL_LENGTH + 1, sizeof(char))) {
+	if ((*ret = (char*)calloc(MAX_LABEL_LENGTH + 1, sizeof(char))) != NULL) {
 		strncpy(*ret, data, MAX_LABEL_LENGTH);
-		if (loc = strchr(*ret, '\x0A')) {
+		if ((loc = strchr(*ret, '\x0A')) != NULL) {
 			*loc = 0;
 			return strlen(*ret);
 		}
@@ -511,7 +511,7 @@ void ws_stack_push(char* parameter, int size)
 {
 	char* label_number = NULL;
 	int leap = 0;
-	if (leap = retrieve_label_or_number(&(parameter[size]), &label_number)) {
+	if ((leap = retrieve_label_or_number(&(parameter[size]), &label_number)) != 0) {
 		stack_push(convert_ws_to_number(label_number));
 		current_instruction_index += size + leap + 1;
 		free (label_number);
@@ -530,7 +530,7 @@ void ws_stack_copy(char* parameter, int size)
 {
 	char* label_number = NULL;
 	int leap = 0;
-	if (leap = retrieve_label_or_number(&(parameter[size]), &label_number)) {
+	if ((leap = retrieve_label_or_number(&(parameter[size]), &label_number)) != 0) {
 		stack_push(stack_peak(convert_ws_to_number(label_number)));
 		current_instruction_index += size + leap + 1;
 		free (label_number);
@@ -562,7 +562,7 @@ void ws_stack_slide(char* parameter, int size)
 	long long first = stack_pop();
 	int leap = 0;
 	char* label_number = NULL;
-	if (leap = retrieve_label_or_number(&(parameter[size]), &label_number)) {
+	if ((leap = retrieve_label_or_number(&(parameter[size]), &label_number)) != 0) {
 		for (int slide_amt = convert_ws_to_number(label_number); slide_amt > 0; slide_amt--)
 			stack_pop();
 		stack_push(first);
@@ -649,7 +649,7 @@ void ws_flow_call(char* parameter, int size)
 {
 	char* label;
 	int leap = 0;
-	if (leap = retrieve_label_or_number(&(parameter[size]), &label)) {
+	if ((leap = retrieve_label_or_number(&(parameter[size]), &label)) != 0) {
 		if (add_ret_addr(current_instruction_index + size + leap + 1)) {
 			ws_flow_jump(parameter, size);
 		}
@@ -690,7 +690,7 @@ void ws_flow_jz(char* parameter, int size)
 		ws_flow_jump(parameter, size);
 	}
 	else {
-		if (leap = retrieve_label_or_number(&(parameter[size]), &label)) {
+		if ((leap = retrieve_label_or_number(&(parameter[size]), &label)) != 0) {
 			current_instruction_index += size + leap + 1;
 			free (label);
 		}
@@ -708,7 +708,7 @@ void ws_flow_jn(char* parameter, int size)
 		ws_flow_jump(parameter, size);
 	}
 	else {
-		if (leap = retrieve_label_or_number(&(parameter[size]), &label)) {
+		if ((leap = retrieve_label_or_number(&(parameter[size]), &label)) != 0) {
 			current_instruction_index += size + leap + 1;
 			free (label);
 		}
