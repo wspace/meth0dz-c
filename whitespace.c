@@ -1,5 +1,5 @@
 // Whitespace Interpreter v1.0 - by meth0dz
-// License - http://creativecommons.org/licenses/by-sa/3.0/us/
+// License - https://creativecommons.org/licenses/by-sa/3.0/us/
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -177,7 +177,7 @@ bool create_stack(void)
 		stack.size = STACK_MEMBERS;
 		stack.current = STACK_MEMBERS;
 		return true;
-	} 
+	}
 	return false;
 }
 
@@ -235,7 +235,7 @@ bool heap_put(long long val, long long addr)
 			return true;
 		}
 	}
-	
+
 	// If not, then it needs to be added if there is room left
 	if (heap.elements < HEAP_MEMBERS) {
 		int i = heap.elements;
@@ -244,7 +244,7 @@ bool heap_put(long long val, long long addr)
 		heap.elements++;
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -426,7 +426,6 @@ bool locate_jump_labels(char* source)
 				label_table.label_location[label_index] = i + 1; // The 1 puts it past the final \x0A
 				label_index++;
 				continue;
-				
 			}
 			// If memory allocation breaks, then we need to report an error
 			return false;
@@ -444,7 +443,7 @@ bool add_ret_addr(long long addr)
 		instruction_index[i] = addr;
 		return true;
 	}
-	else 
+	else
 		return false;
 }
 
@@ -503,7 +502,7 @@ int retrieve_label_or_number(char* data, char** ret)
 		}
 		free (*ret);
 	}
-	
+
 	return 0;
 }
 
@@ -695,7 +694,7 @@ void ws_flow_jz(char* parameter, int size)
 			current_instruction_index += size + leap + 1;
 			free (label);
 		}
-		else 
+		else
 			current_instruction_index += size;
 	}
 	return;
@@ -713,7 +712,7 @@ void ws_flow_jn(char* parameter, int size)
 			current_instruction_index += size + leap + 1;
 			free (label);
 		}
-		else 
+		else
 			current_instruction_index += size;
 	}
 	return;
@@ -761,5 +760,4 @@ void ws_io_inn(char* parameter, int size)
 	heap_put(strtoll(s, &e, 10), stack_pop());
 	current_instruction_index += size;
 	return;
-	
 }
