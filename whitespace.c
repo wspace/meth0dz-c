@@ -101,7 +101,7 @@ void ws_io_inn(char* parameter, int size);
 
 int main(int argc, char** argv)
 {
-	char* p, * source;
+	char* source;
 	if (argc == 2) {
 		if (read_source_file(argv[1], &source)) {
 			remove_comments(source);
@@ -285,7 +285,7 @@ void cleanup_label_table(void)
 }
 
 
-// Memory Management gets a bit annoyingly comlicated here
+// Memory Management gets a bit annoyingly complicated here
 // But I would prefer to leave everything to be dynamically allocated
 bool create_instruction_set(void)
 {
@@ -413,8 +413,8 @@ void cleanup_instruction_set(void)
 */
 bool locate_jump_labels(char* source)
 {
-	int label_index = 0, j, leap;
-	char* label_marker = "\x0A\x20\x20", * temp;
+	int label_index = 0, j;
+	char* label_marker = "\x0A\x20\x20";
 	for (int i = 0; source[i]; i++) {
 		if (!strncmp(&(source[i]), label_marker, 3) && (source[i-1] != '\x09')) {
 			if ((label_table.label_id[label_index] = (char*)calloc(MAX_LABEL_LENGTH, sizeof(char))) != NULL) {

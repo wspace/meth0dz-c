@@ -1,0 +1,4 @@
+whitespace
+*.out
+*.exe
+*.o
